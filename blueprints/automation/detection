@@ -1,0 +1,36 @@
+alias: DETECTION CAVE 💡
+description: blueprint
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.detecteur_escalier_cave_mouvement
+      - binary_sensor.detecteur_buanderie_mouvement
+    from: "off"
+    to: "on"
+condition: []
+action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+        - light.lampe_escalier_cave_lumiere
+        - light.lampe_congelo_lumiere
+  - wait_for_trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.detecteur_escalier_cave_mouvement
+          - binary_sensor.detecteur_buanderie_mouvement
+        from: "on"
+        to: "off"
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+        - light.lampe_escalier_cave_lumiere
+        - light.lampe_congelo_lumiere
+mode: restart
+max_exceeded: silent
