@@ -1,0 +1,63 @@
+blueprint:
+  name: Door Open Notify
+  description: While door open, keep send notification after specific times.
+  domain: automation
+  input:
+    door_entity:
+      name: Door Sensor
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+          
+    open_time_interval:
+      name: Time Interval
+      description: After how many seconds will send notification.
+      default: 30
+      selector:
+        number:
+          min: 0
+          max: 3600
+          unit_of_measurement: seconds
+    notify_service_open:
+      name: Notify Service Open
+      description: Select notify service or tts service and set message when doop is open. Use {{ door_name }} will show door friendly name.
+      selector:
+        action: {}
+
+    notify_service_close:
+      name: Notify Service Close
+      description: Select notify service or tts service and set message when doop is close. Use {{ door_name }} will show door friendly name.
+      selector:
+        action: {}
+        
+mode: single
+max_exceeded: silent
+
+trigger:
+  platform: state
+  entity_id: !input door_entity
+  to: "on"
+  for:
+    seconds: !input open_time_interval
+    
+variables:
+  door_entity: !input door_entity
+  door_name: "{{ states[door_entity].name }}"
+    
+action:
+  - repeat:
+      while:  
+        - condition: state
+          entity_id: !input door_entity
+          state: 'on' 
+      sequence:       
+        - choose: []
+          default: !input notify_service_open
+        - wait_template: "{{ is_state(door_entity, 'off') }}"
+          timeout: !input open_time_interval
+  - condition: state
+    entity_id: !input door_entity
+    state: 'off' 
+  - choose: []
+    default: !input notify_service_close
