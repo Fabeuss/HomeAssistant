@@ -1,0 +1,94 @@
+# version: 1.0.1
+# changelog:
+# - Support for multiple door sensors
+# - Initial release
+blueprint:
+  name: Open Door Notification
+  description: Send a notification when a door is left open.
+  domain: automation
+
+  input:
+    door_sensor:
+      name: Door Sensor
+      description: One or more binary sensors with device class door.
+      selector:
+        entity:
+          multiple: true
+          domain: binary_sensor
+          device_class: door
+
+    trigger_delay:
+      name: Trigger Delay
+      description: How long to wait before triggering the notification.
+      selector:
+        number:
+          min: 5
+          max: 300
+          step: 5
+          unit_of_measurement: seconds
+
+    repeat_limit:
+      name: Repeat Notifications Limit
+      description: How many times the notification will be repeated before stopping (even if the door is still open).
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
+          unit_of_measurement: times
+
+    repeat_delay:
+      name: Repeat Notification Delay
+      description: How long to wait before repeating the notification if the door is still open.
+      selector:
+        number:
+          min: 5
+          max: 300
+          step: 5
+          unit_of_measurement: seconds
+
+    notification_target:
+      name: Notification Target
+      description: Name of a notification service to notify when the automation is triggered (e.g., enter `slack` to use `notify.slack`). Leave blank to disable.
+      selector:
+        text:
+          multiline: false
+          type: text
+
+variables:
+  door_sensor: !input door_sensor
+  trigger_delay: !input trigger_delay
+  notification_target: !input notification_target
+  repeat_limit: !input repeat_limit
+
+# Set mode to parallel to accomodate multiple entities
+mode: parallel
+
+trigger:
+  - platform: state
+    entity_id: !input door_sensor
+    to: 'on'
+    for:
+      seconds: !input trigger_delay
+
+action:
+  repeat:
+    until:
+      - condition: template
+        value_template: "{{ is_state(trigger.entity_id, 'off') }}"
+    sequence:
+      - condition: template
+        value_template: "{{ repeat.index <= repeat_limit }}"
+
+      - variables:
+          message: >
+            Excuse me, the {{ state_attr(trigger.entity_id, "friendly_name") }} has been open for {{ relative_time(trigger.to_state.last_changed) }}. Can someone please close it?
+
+      - service: 'notify.{{ notification_target }}'
+        data_template:
+          title: Door Alert
+          message: >
+            {{ message }} (Reminder {{ repeat.index }} / {{ repeat_limit }})
+
+      - delay:
+          seconds: !input repeat_delay
