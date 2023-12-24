@@ -9,13 +9,12 @@ blueprint:
 
   input:
     door_sensor:
-      name: Door Sensor
-      description: One or more binary sensors with device class door.
+      name: Sensor
+      description: One or more binary sensors.
       selector:
         entity:
           multiple: true
           domain: binary_sensor
-          device_class: door
 
     trigger_delay:
       name: Trigger Delay
