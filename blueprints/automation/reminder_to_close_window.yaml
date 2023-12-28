@@ -89,7 +89,7 @@ condition:
 
 # Send a notification to the mobile device. 
 action:
-  - service: notify.notify
-    data:
-      message: !input notify_service
+- service: notify.notify
+  data:
+    message: !input notify_service
 mode: single
