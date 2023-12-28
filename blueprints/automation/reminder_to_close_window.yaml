@@ -91,6 +91,4 @@ condition:
 action:
 - entity_id: notify_service
   type: notify
-  message: 'Time to close'
-
 mode: single
