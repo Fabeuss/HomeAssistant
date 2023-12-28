@@ -49,11 +49,9 @@ blueprint:
           step: 1
           max: 25
           mode: slider
-    device_identifier:
-      name: Device to notify
-      description: >
-        The device to receive the notification; it needs to run the official 
-        Home Assistant app to receive notifications.
+    notify_service_close:
+      name: Notify Service Close
+      description: Select notify service or tts service and set message when doop is close. Use {{ door_name }} will show door friendly name.
       selector:
         action: {}
 
