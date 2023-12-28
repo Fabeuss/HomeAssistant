@@ -89,6 +89,7 @@ condition:
 
 # Send a notification to the mobile device. 
 action:
-- entity_id: !input notify_service
-  type: notify
+  - service: notify.notify
+    data:
+      message: !input notify_service
 mode: single
