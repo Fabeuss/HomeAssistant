@@ -54,9 +54,8 @@ blueprint:
       description: >
         The device to receive the notification; it needs to run the official 
         Home Assistant app to receive notifications.
-      selector: 
-        service:
-          integration: mobile_app
+      selector:
+        action: {}
 
 # We will have two triggers, for the two different reminders. 
 # However, a reminder will be ignored if the door or window is already closed by then. 
