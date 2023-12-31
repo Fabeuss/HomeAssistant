@@ -131,7 +131,8 @@ condition:
   entity_id: !input contact_sensor
   state: 'on'
 - condition: numeric_state
-  entity_id: weather.pihome
+  entity_id: weather.holtzheim
+  attribute: temperature
   below: !input temperature
 # Send a notification to the Echo device. 
 action:
