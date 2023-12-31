@@ -23,30 +23,6 @@ blueprint:
       selector: 
         entity:
           domain: binary_sensor
-    humidity_sensor: 
-      name: Humidity Sensor
-      description: 'The sensor used for reading the humidity.'
-      selector: 
-        entity:
-          domain: sensor
-          device_class: humidity
-    humidity:
-      name: 'Humidity'
-      description: 'The inside humidity below which the notification should be sent.'
-      default: 61
-      selector: 
-        number:
-          min: 50
-          step: 1
-          max: 80
-          mode: slider
-    temperature_sensor: 
-      name: Temperature Sensor
-      description: 'The sensor used for reading the outside temperature.'
-      selector: 
-        entity:
-          domain: sensor
-          device_class: temperature
     temperature:
       name: 'Temperature'
       description: 'The outside temperature below which the notification should be sent.'
@@ -155,10 +131,8 @@ condition:
   entity_id: !input contact_sensor
   state: 'on'
 - condition: numeric_state
-  entity_id: !input humidity_sensor
-  below: !input humidity
-- condition: numeric_state
-  entity_id: !input temperature_sensor
+  entity_id: weather.pihome
+  attribute: temperature
   below: !input temperature
 # Send a notification to the Echo device. 
 action:
