@@ -1,2 +1,2 @@
-# HomeAssistant blueprints
+# HASS blueprints
 Blueprints for Home Assistant.
