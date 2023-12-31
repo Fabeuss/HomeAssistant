@@ -132,7 +132,6 @@ condition:
   state: 'on'
 - condition: numeric_state
   entity_id: weather.pihome
-  attribute: temperature
   below: !input temperature
 # Send a notification to the Echo device. 
 action:
